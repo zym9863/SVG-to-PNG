@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "SVG to PNG",
+  "version": "1.0",
+  "description": "将SVG代码转换为PNG图片，支持预览和自定义文件名下载",
+  "icons": {
+    "48": "image_fx.jpg",
+    "128": "image_fx.jpg"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "image_fx.jpg"
+  },
+  "permissions": [
+    "downloads"
+  ]
+}
