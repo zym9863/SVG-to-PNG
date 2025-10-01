@@ -12,9 +12,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updatePreview() {
     const svgCode = svgInput.value.trim();
+    
+    // 移除预览标签
+    const existingLabel = preview.querySelector('.preview-label');
+    if (existingLabel) {
+      existingLabel.remove();
+    }
+    
     if (svgCode) {
       // 清空预览区域
       preview.innerHTML = '';
+      
+      // 重新添加预览标签
+      const label = document.createElement('span');
+      label.className = 'preview-label';
+      label.textContent = '预览';
+      preview.appendChild(label);
+      
       try {
         // 将SVG代码转换为DOM元素
         const parser = new DOMParser();
@@ -28,19 +42,45 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error('无效的SVG代码');
         }
       } catch (error) {
-        preview.textContent = '预览失败：' + error.message;
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-state';
+        errorDiv.textContent = '预览失败：' + error.message;
+        preview.appendChild(errorDiv);
       }
     } else {
-      preview.textContent = '请输入SVG代码';
+      preview.innerHTML = '';
+      const label = document.createElement('span');
+      label.className = 'preview-label';
+      label.textContent = '预览';
+      preview.appendChild(label);
+      
+      const emptyState = document.createElement('span');
+      emptyState.className = 'empty-state';
+      emptyState.textContent = '等待 SVG 代码输入';
+      preview.appendChild(emptyState);
     }
   }
 
   function downloadPNG() {
     const svgElement = preview.querySelector('svg');
     if (!svgElement) {
-      alert('请先输入有效的SVG代码');
+      // 显示错误动画
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-state';
+      errorDiv.textContent = '请先输入有效的 SVG 代码';
+      preview.innerHTML = '';
+      const label = document.createElement('span');
+      label.className = 'preview-label';
+      label.textContent = '预览';
+      preview.appendChild(label);
+      preview.appendChild(errorDiv);
       return;
     }
+
+    // 添加下载中状态
+    downloadBtn.classList.add('downloading');
+    const originalText = downloadBtn.lastChild.textContent;
+    downloadBtn.lastChild.textContent = '下载中...';
 
     // 获取SVG的尺寸
     const svgWidth = svgElement.getAttribute('width') || svgElement.clientWidth;
@@ -77,8 +117,49 @@ document.addEventListener('DOMContentLoaded', () => {
         // 清理URL对象
         URL.revokeObjectURL(downloadUrl);
         URL.revokeObjectURL(url);
+
+        // 显示成功状态
+        downloadBtn.classList.remove('downloading');
+        downloadBtn.classList.add('success');
+        downloadBtn.lastChild.textContent = '下载成功！';
+        
+        // 显示成功消息
+        showSuccessMessage('PNG 文件已成功下载！');
+
+        // 恢复按钮状态
+        setTimeout(() => {
+          downloadBtn.classList.remove('success');
+          downloadBtn.lastChild.textContent = originalText;
+        }, 2000);
       }, 'image/png');
     };
+    
+    img.onerror = () => {
+      downloadBtn.classList.remove('downloading');
+      downloadBtn.lastChild.textContent = originalText;
+      
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'error-state';
+      errorDiv.textContent = '转换失败，请检查 SVG 代码';
+      preview.innerHTML = '';
+      const label = document.createElement('span');
+      label.className = 'preview-label';
+      label.textContent = '预览';
+      preview.appendChild(label);
+      preview.appendChild(errorDiv);
+    };
+    
     img.src = url;
+  }
+
+  function showSuccessMessage(message) {
+    const successMsg = document.createElement('div');
+    successMsg.className = 'success-message';
+    successMsg.textContent = message;
+    document.body.appendChild(successMsg);
+
+    setTimeout(() => {
+      successMsg.remove();
+    }, 3000);
   }
 });

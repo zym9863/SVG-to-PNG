@@ -5,158 +5,352 @@
   <title>SVG to PNG</title>
   <style>
     :root {
-      --primary-gradient: linear-gradient(135deg, #6366F1, #3B82F6);
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --primary-gradient-hover: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
       --success-color: #10B981;
       --warning-color: #F59E0B;
       --error-color: #EF4444;
-      --bg-gradient: linear-gradient(to bottom, #F8FAFC, #F1F5F9);
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --shadow-light: 0 4px 15px rgba(102, 126, 234, 0.2);
+      --shadow-medium: 0 8px 25px rgba(102, 126, 234, 0.3);
+      --shadow-heavy: 0 12px 35px rgba(102, 126, 234, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
-      width: 400px;
-      min-height: 500px;
+      width: 420px;
+      min-height: 560px;
       margin: 0;
-      padding: 20px;
-      font-family: 'Segoe UI', sans-serif;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background: var(--bg-gradient);
       color: #1E1E1E;
+      overflow-x: hidden;
     }
 
     .container {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 18px;
       height: 100%;
+      padding: 24px;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .title {
-      font-family: 'Segoe UI Semibold', sans-serif;
-      font-size: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 26px;
+      font-weight: 700;
       text-align: center;
+      margin: 0 0 5px;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      letter-spacing: -0.5px;
+      animation: slideDown 0.6s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .subtitle {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 13px;
       margin: 0 0 10px;
-      background: var(--primary-gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      animation: fadeIn 0.8s ease-out;
     }
 
     .input-area {
       position: relative;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow-light);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideUp 0.7s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .input-area:hover {
-      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: var(--shadow-medium);
+      transform: translateY(-2px);
+    }
+
+    .input-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     textarea {
       width: 100%;
-      height: 120px;
-      padding: 12px;
-      border: 1px solid rgba(99, 102, 241, 0.2);
-      border-radius: 8px;
-      font-family: 'Space Mono', monospace;
-      font-size: 14px;
+      height: 130px;
+      padding: 14px;
+      border: 2px solid rgba(102, 126, 234, 0.15);
+      border-radius: 12px;
+      font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+      font-size: 13px;
       resize: none;
-      transition: border-color 0.3s ease;
-      background: transparent;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(248, 250, 252, 0.5);
+      color: #1e293b;
+      line-height: 1.6;
     }
 
     textarea:focus {
       outline: none;
-      border-color: #6366F1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+      background: white;
+      transform: scale(1.01);
+    }
+
+    textarea::placeholder {
+      color: #94a3b8;
+      font-style: italic;
     }
 
     #preview {
-      min-height: 200px;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
-      border: 2px dashed rgba(99, 102, 241, 0.3);
-      border-radius: 12px;
+      min-height: 220px;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      border: 3px dashed rgba(102, 126, 234, 0.25);
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s ease;
-      padding: 15px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      animation: slideUp 0.9s ease-out;
+    }
+
+    #preview::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(102, 126, 234, 0.03), transparent);
+      pointer-events: none;
     }
 
     #preview:hover {
-      border-color: #6366F1;
+      border-color: #667eea;
+      box-shadow: var(--shadow-light);
+      transform: translateY(-2px);
+    }
+
+    #preview svg {
+      max-width: 100%;
+      max-height: 180px;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+      animation: zoomIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .preview-label {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #667eea;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 4px 10px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     }
 
     .download-section {
       display: flex;
       gap: 12px;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: var(--shadow-light);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideUp 1.1s ease-out;
+    }
+
+    .download-section:hover {
+      box-shadow: var(--shadow-medium);
+      transform: translateY(-2px);
     }
 
     input[type="text"] {
       flex: 1;
-      padding: 10px 12px;
-      border: 1px solid rgba(99, 102, 241, 0.2);
-      border-radius: 8px;
-      font-family: 'SF Pro Rounded', 'Segoe UI', sans-serif;
+      padding: 12px 16px;
+      border: 2px solid rgba(102, 126, 234, 0.15);
+      border-radius: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 14px;
-      transition: all 0.3s ease;
-      background: transparent;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(248, 250, 252, 0.5);
+      color: #1e293b;
     }
 
     input[type="text"]:focus {
       outline: none;
-      border-color: #6366F1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+      background: white;
+      transform: scale(1.01);
+    }
+
+    input[type="text"]::placeholder {
+      color: #94a3b8;
     }
 
     button {
-      padding: 10px 20px;
+      padding: 12px 24px;
       background: var(--primary-gradient);
       color: white;
       border: none;
-      border-radius: 8px;
-      font-family: 'SF Pro Rounded', 'Segoe UI', sans-serif;
+      border-radius: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--primary-gradient-hover);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    button:hover::before {
+      opacity: 1;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-heavy);
+    }
+
+    button:active {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    button > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    button.downloading {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    button.downloading .icon {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    button.success {
+      background: var(--success-color);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    @keyframes pulse {
+      0%, 100% { 
+        opacity: 0.5;
+        transform: scale(1);
+      }
+      50% { 
+        opacity: 1;
+        transform: scale(1.05);
+      }
+    }
+
+    .empty-state {
+      color: #94a3b8;
+      font-size: 14px;
+      animation: pulse 3s ease-in-out infinite;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    .icon {
-      width: 16px;
-      height: 16px;
-      fill: currentColor;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.6; }
-      50% { opacity: 1; }
-      100% { opacity: 0.6; }
-    }
-
-    .empty-state {
-      color: #64748B;
-      font-size: 14px;
-      animation: pulse 2s infinite;
+    .empty-state::before {
+      content: '✨';
+      font-size: 20px;
+      animation: pulse 3s ease-in-out infinite;
     }
 
     .error-state {
@@ -165,25 +359,83 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .error-state::before {
+      content: '⚠️';
+      font-size: 18px;
+    }
+
+    .success-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--success-color);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 1000;
+      animation: slideDownAndUp 3s ease-in-out;
+    }
+
+    @keyframes slideDownAndUp {
+      0% {
+        transform: translateX(-50%) translateY(-100px);
+        opacity: 0;
+      }
+      10%, 90% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-50%) translateY(-100px);
+        opacity: 0;
+      }
+    }
+
+    .success-message::before {
+      content: '✓';
+      font-size: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1 class="title">SVG to PNG 转换器</h1>
+    <h1 class="title">✨ SVG to PNG 转换器</h1>
+    <p class="subtitle">快速转换您的 SVG 为高质量 PNG 图片</p>
     <div class="input-area">
-      <textarea id="svgInput" placeholder="在此粘贴SVG代码..."></textarea>
+      <label class="input-label">SVG 代码输入</label>
+      <textarea id="svgInput" placeholder="在此粘贴您的 SVG 代码..."></textarea>
     </div>
     <div id="preview">
-      <span class="empty-state">请输入SVG代码查看预览</span>
+      <span class="preview-label">预览</span>
+      <span class="empty-state">等待 SVG 代码输入</span>
     </div>
     <div class="download-section">
-      <input type="text" id="fileName" placeholder="输入文件名（不需要.png后缀）">
+      <input type="text" id="fileName" placeholder="输入文件名（可选）">
       <button id="downloadBtn">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
         </svg>
-        下载PNG
+        下载 PNG
       </button>
     </div>
   </div>
